@@ -1,0 +1,9 @@
+# Ignore vendor folders and binaries
+/VendorSource_*/
+/**/bin/
+/**/obj/
+/*.suo
+/*.user
+/*.cache
+*.dll
+*.pdb

@@ -1,12 +1,13 @@
-# inject-overlay.ps1
-$json = Get-Content -Raw -Path ".\vendor-version.json" | ConvertFrom-Json
-$VendorPath = ".\" + $json.vendor_folder
+param (
+    [string]$VendorFolder = "VendorSource_Alice"
+)
+
 $OverlayPath = ".\Overlay"
 $TestsPath = ".\Tests"
+$VendorSln = ".\$VendorFolder\VendorApp.sln"
 
-# Add overlay project
-dotnet sln "$VendorPath\VendorApp.sln" add "$OverlayPath\CustomExtensions\CustomExtensions.csproj"
-dotnet add "$OverlayPath\CustomExtensions\CustomExtensions.csproj" reference "$VendorPath\CoreLogic\CoreLogic.csproj"
+dotnet sln "$VendorSln" add "$OverlayPath\CustomExtensions\CustomExtensions.csproj"
+dotnet add "$OverlayPath\CustomExtensions\CustomExtensions.csproj" reference ".\$VendorFolder\CoreLogic\CoreLogic.csproj"
+dotnet sln "$VendorSln" add "$TestsPath\CustomTests\CustomTests.csproj"
 
-# Add test project
-dotnet sln "$VendorPath\VendorApp.sln" add "$TestsPath\CustomTests\CustomTests.csproj"
+Write-Host "Tests injected into $VendorSln"
