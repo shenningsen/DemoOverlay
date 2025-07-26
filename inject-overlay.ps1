@@ -1,13 +1,12 @@
 # inject-overlay.ps1
-param (
-    [string]$VendorPath = ".\VendorSource",
-    [string]$OverlayPath = ".\Overlay",
-    [string]$TestsPath = ".\Tests"
-)
+$json = Get-Content -Raw -Path ".\vendor-version.json" | ConvertFrom-Json
+$VendorPath = ".\" + $json.vendor_folder
+$OverlayPath = ".\Overlay"
+$TestsPath = ".\Tests"
 
 # Add overlay project
 dotnet sln "$VendorPath\VendorApp.sln" add "$OverlayPath\CustomExtensions\CustomExtensions.csproj"
 dotnet add "$OverlayPath\CustomExtensions\CustomExtensions.csproj" reference "$VendorPath\CoreLogic\CoreLogic.csproj"
 
-# Add tests
+# Add test project
 dotnet sln "$VendorPath\VendorApp.sln" add "$TestsPath\CustomTests\CustomTests.csproj"

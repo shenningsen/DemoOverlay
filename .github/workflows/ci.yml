@@ -13,11 +13,18 @@ jobs:
       with:
         dotnet-version: '8.x'
 
-    - name: Restore & Build
+    - name: Read vendor version
+      id: vendor
+      run: |
+        $vendor = Get-Content vendor-version.json | ConvertFrom-Json
+        "VENDOR_FOLDER=$($vendor.vendor_folder)" | Out-File -FilePath $env:GITHUB_ENV -Append
+      shell: pwsh
+
+    - name: Inject overlay and build
       run: |
         .\inject-overlay.ps1
-        dotnet restore VendorSource/VendorApp.sln
-        dotnet build VendorSource/VendorApp.sln --no-restore
+        dotnet restore $env:VENDOR_FOLDER/VendorApp.sln
+        dotnet build $env:VENDOR_FOLDER/VendorApp.sln --no-restore
 
-    - name: Run Tests
-      run: dotnet test VendorSource/VendorApp.sln --no-build
+    - name: Run tests
+      run: dotnet test $env:VENDOR_FOLDER/VendorApp.sln --no-build
